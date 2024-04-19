@@ -4,6 +4,7 @@ export default {
   theme: {
     fontFamily: {
       sans: [
+        'Lato',
         '-apple-system',
         'BlinkMacSystemFont',
         'Segoe UI',

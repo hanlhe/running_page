@@ -4,6 +4,7 @@ export default {
   theme: {
     fontFamily: {
       sans: [
+        'Go',
         '-apple-system',
         'BlinkMacSystemFont',
         'Segoe UI',

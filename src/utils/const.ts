@@ -3,7 +3,7 @@ const MAPBOX_TOKEN =
   // For security reasons, please avoid using the default public token provided by Mapbox as much as possible.
   // Instead, manually add a new token and apply URL restrictions.
   // (please refer to https://github.com/yihong0618/running_page/issues/643#issuecomment-2042668580)
-  'pk.eyJ1IjoieWlob25nMDYxOCIsImEiOiJja2J3M28xbG4wYzl0MzJxZm0ya2Fua2p2In0.PNKfkeQwYuyGOTT_x9BJ4Q';
+  'pk.eyJ1IjoiaGFubGluMTAiLCJhIjoiY2xtenB5M3U4MWl5eTJpbGQ2anNtejFlOCJ9.RTUe3msRT0bxiKufm2yydQ';
 const MUNICIPALITY_CITIES_ARR = [
   '北京市',
   '上海市',
@@ -45,10 +45,10 @@ const PRIVACY_MODE = false;
 //set to `false` if you want to make light off as default, only effect when `PRIVACY_MODE` = false
 const LIGHTS_ON =false;
 // richer title for the activity types (like garmin style)
-const RICH_TITLE = false;
+const RICH_TITLE = true;
 
 // IF you outside China please make sure IS_CHINESE = false
-const IS_CHINESE = true;
+const IS_CHINESE = false;
 const USE_ANIMATION_FOR_GRID = false;
 const CHINESE_INFO_MESSAGE = (yearLength: number, year: string): string => {
   const yearStr = year === 'Total' ? '所有' : ` ${year} `;

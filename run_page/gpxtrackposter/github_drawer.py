@@ -21,9 +21,9 @@ class GithubDrawer(TracksDrawer):
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw")
         year_size = 200 * 4.0 / 80.0
-        year_style = f"font-size:{year_size}px; font-family:Arial;"
-        year_length_style = f"font-size:{110 * 3.0 / 80.0}px; font-family:Arial;"
-        month_names_style = f"font-size:2.5px; font-family:Arial"
+        year_style = f"font-size:{year_size}px; font-family:'Lato';"
+        year_length_style = f"font-size:{110 * 3.0 / 80.0}px; font-family:'Lato';"
+        month_names_style = f"font-size:2.5px; font-family:'Lato'"
         total_length_year_dict = self.poster.total_length_year_dict
 
         is_align_monday = self.poster.github_style == "align-monday"

@@ -12,7 +12,7 @@ interface ISiteMetadataResult {
 const data: ISiteMetadataResult = {
   siteTitle: 'Running Page',
   siteUrl: 'https://hanlhe.github.io/running_page/',
-  logo: 'https://dgalywyr863hv.cloudfront.net/pictures/athletes/28483117/28756695/2/large.jpg',
+  logo: 'https://dgalywyr863hv.cloudfront.net/pictures/athletes/28483117/28756695/3/large.jpg',
   description: 'Personal site and blog',
   navLinks: [
     {

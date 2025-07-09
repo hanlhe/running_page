@@ -16,8 +16,8 @@ const getBasePath = () => {
 
 const data: ISiteMetadataResult = {
   siteTitle: 'Running Page',
-  siteUrl: 'https://yihong.run',
-  logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTtc69JxHNcmN1ETpMUX4dozAgAN6iPjWalQ&usqp=CAU',
+  siteUrl: 'https://hanlhe.github.io/running_page/',
+  logo: 'https://dgalywyr863hv.cloudfront.net/pictures/athletes/28483117/28756695/9/large.jpg',
   description: 'Personal site and blog',
   navLinks: [
     {
@@ -25,12 +25,12 @@ const data: ISiteMetadataResult = {
       url: `${getBasePath()}/summary`,
     },
     {
-      name: 'Blog',
-      url: 'https://github.com/yihong0618/gitblog',
+      name: 'Strava',
+      url: 'https://www.strava.com/athletes/hanlhe',
     },
     {
-      name: 'About',
-      url: 'https://github.com/yihong0618/running_page/blob/master/README-CN.md',
+      name: 'Instagram',
+      url: 'https://www.instagram.com/hanlin10',
     },
   ],
 };

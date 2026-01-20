@@ -184,25 +184,15 @@ export const COUNTRY_FILL_COLOR = dark_vanilla;
 export const RUN_COLOR_LIGHT = '#47b8e0';
 export const RUN_COLOR_DARK = MAIN_COLOR;
 
+// Map run gradient colors (fallbacks, theme-aware via CSS variables when available)
+export const RUN_GRADIENT_START_LIGHT = '#d4a574';
+export const RUN_GRADIENT_END_LIGHT = '#c5756b';
+export const RUN_GRADIENT_START_DARK = '#f7d02c';
+export const RUN_GRADIENT_END_DARK = '#f56c6c';
+
 // Single run animation colors
 export const SINGLE_RUN_COLOR_LIGHT = '#52c41a'; // Green for light theme
 export const SINGLE_RUN_COLOR_DARK = '#ff4d4f'; // Red for dark theme
-
-// Helper function to get theme-aware RUN_COLOR
-export const getRuntimeRunColor = (): string => {
-  if (typeof window === 'undefined') return RUN_COLOR_DARK;
-
-  const dataTheme = document.documentElement.getAttribute('data-theme');
-  const savedTheme = localStorage.getItem('theme');
-
-  // Determine current theme (default to dark)
-  const isDark =
-    dataTheme === 'dark' ||
-    (!dataTheme && savedTheme === 'dark') ||
-    (!dataTheme && !savedTheme);
-
-  return isDark ? RUN_COLOR_DARK : RUN_COLOR_LIGHT;
-};
 
 // Helper function to get theme-aware SINGLE_RUN_COLOR
 export const getRuntimeSingleRunColor = (): string => {
@@ -214,10 +204,42 @@ export const getRuntimeSingleRunColor = (): string => {
   // Determine current theme (default to dark)
   const isDark =
     dataTheme === 'dark' ||
+    dataTheme === 'synthwave' ||
     (!dataTheme && savedTheme === 'dark') ||
+    (!dataTheme && savedTheme === 'synthwave') ||
     (!dataTheme && !savedTheme);
 
   return isDark ? SINGLE_RUN_COLOR_DARK : SINGLE_RUN_COLOR_LIGHT;
+};
+
+export const getRuntimeRunGradientColors = (): {
+  start: string;
+  end: string;
+} => {
+  if (typeof window === 'undefined') {
+    return { start: RUN_GRADIENT_START_DARK, end: RUN_GRADIENT_END_DARK };
+  }
+
+  const styles = getComputedStyle(document.documentElement);
+  const startVar = styles.getPropertyValue('--svg-special-color').trim();
+  const endVar = styles.getPropertyValue('--svg-special-color2').trim();
+
+  if (startVar && endVar) {
+    return { start: startVar, end: endVar };
+  }
+
+  const dataTheme = document.documentElement.getAttribute('data-theme');
+  const savedTheme = localStorage.getItem('theme');
+  const isDark =
+    dataTheme === 'dark' ||
+    dataTheme === 'synthwave' ||
+    (!dataTheme && savedTheme === 'dark') ||
+    (!dataTheme && savedTheme === 'synthwave') ||
+    (!dataTheme && !savedTheme);
+
+  return isDark
+    ? { start: RUN_GRADIENT_START_DARK, end: RUN_GRADIENT_END_DARK }
+    : { start: RUN_GRADIENT_START_LIGHT, end: RUN_GRADIENT_END_LIGHT };
 };
 
 // Legacy export for backwards compatibility

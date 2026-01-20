@@ -24,6 +24,8 @@
   /* fonts */
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  /* background */
+  --color-bg-gradient: none;
 }
 
 /* 1. System Theme (Base) */
@@ -107,16 +109,79 @@
   --font-mono: 'IBM Plex Mono', monospace;
 }
 
+[data-theme='synthwave'] {
+  --color-brand: #ff2f92;
+  --color-secondary: #2de2e6;
+  --color-bg: #140b2d;
+  --color-tx: #f4f1ff;
+  --color-hr: rgba(255, 47, 146, 0.35);
+  --color-selected: #f2e94e;
+  --color-run-date: #9bb7ff;
+  --color-run-table-thead: #f2e94e;
+  --color-run-row-hover-background: #241447;
+  --color-activity-card: #1f123b;
+  --svg-color-active-cell: #2de2e6;
+  --svg-special-color: #f2e94e;
+  --svg-special-color2: #ff2f92;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --color-bg-gradient: radial-gradient(
+      1200px 600px at 10% -10%,
+      rgba(255, 47, 146, 0.28),
+      transparent 60%
+    ),
+    radial-gradient(
+      1000px 700px at 90% 10%,
+      rgba(45, 226, 230, 0.22),
+      transparent 55%
+    ),
+    radial-gradient(
+      1200px 800px at 50% 120%,
+      rgba(242, 233, 78, 0.14),
+      transparent 60%
+    );
+}
+
 @layer base {
   html,
   body {
     background-color: var(--color-background);
-    color: var(--color-brand);
+    background-image: var(--color-bg-gradient);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    color: var(--color-text-primary);
     transition:
       background-color 0.1s ease,
       color 0.1s ease;
     font-family: var(--font-sans);
   }
+}
+
+@keyframes neon-glow {
+  0%,
+  100% {
+    text-shadow:
+      0 0 4px rgba(255, 47, 146, 0.5),
+      0 0 8px rgba(45, 226, 230, 0.25);
+  }
+  50% {
+    text-shadow:
+      0 0 8px rgba(255, 47, 146, 0.7),
+      0 0 16px rgba(45, 226, 230, 0.4),
+      0 0 24px rgba(255, 47, 146, 0.2);
+  }
+}
+
+[data-theme='synthwave'] a,
+[data-theme='synthwave'] button {
+  animation: neon-glow 4s ease-in-out infinite;
+}
+
+[data-theme='synthwave'] hr {
+  box-shadow:
+    0 0 12px rgba(255, 47, 146, 0.35),
+    0 0 18px rgba(45, 226, 230, 0.25);
 }
 
 img::selection {

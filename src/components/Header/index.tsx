@@ -1,17 +1,16 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 import { useTheme, Theme } from '@/hooks/useTheme';
 import styles from './style.module.css';
 
 const Header = () => {
   const { logo, siteUrl, navLinks } = useSiteMetadata();
-  const { setTheme } = useTheme();
-  const [currentIconIndex, setCurrentIconIndex] = useState(0);
+  const { theme, setTheme } = useTheme();
 
   const icons = [
     {
       id: 'dark',
+      label: 'Dark',
       svg: (
         <svg
           width="22"
@@ -32,6 +31,7 @@ const Header = () => {
     },
     {
       id: 'light',
+      label: 'Light',
       svg: (
         <svg
           width="24"
@@ -50,15 +50,55 @@ const Header = () => {
         </svg>
       ),
     },
+    {
+      id: 'synthwave',
+      label: 'Synthwave',
+      svg: (
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 14C5 10 7 18 9 14C11 10 13 18 15 14C17 10 19 18 21 14"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M4 18H20"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M7 6L9 9L12 4L15 9L17 6"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
   ];
 
   const handleToggle = () => {
-    const nextIndex = (currentIconIndex + 1) % icons.length;
-    setCurrentIconIndex(nextIndex);
+    const currentIndex = Math.max(
+      0,
+      icons.findIndex((icon) => icon.id === theme)
+    );
+    const nextIndex = (currentIndex + 1) % icons.length;
     setTheme(icons[nextIndex].id as Theme);
   };
 
-  const currentIcon = icons[currentIconIndex];
+  const currentIcon =
+    icons.find((icon) => icon.id === theme) ?? icons[0];
+  const nextIcon =
+    icons[(icons.indexOf(currentIcon) + 1) % icons.length] ?? icons[0];
 
   return (
     <>
@@ -85,8 +125,8 @@ const Header = () => {
               type="button"
               onClick={handleToggle}
               className={`${styles.themeButton} ${styles.themeButtonActive}`}
-              aria-label={`Switch to ${currentIcon.id} theme`}
-              title={`Switch to ${currentIcon.id} theme`}
+              aria-label={`Switch to ${nextIcon.label} theme`}
+              title={`Switch to ${nextIcon.label} theme`}
             >
               <div className={styles.iconWrapper}>{currentIcon.svg}</div>
             </button>

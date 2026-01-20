@@ -14,10 +14,10 @@ import {
   HIKING_COLOR,
   WALKING_COLOR,
   SWIMMING_COLOR,
-  getRuntimeRunColor,
   RUN_TRAIL_COLOR,
   MAP_TILE_STYLES,
   MAP_TILE_STYLE_DARK,
+  getRuntimeRunGradientColors,
 } from './const';
 import {
   FeatureCollection,
@@ -238,18 +238,92 @@ const pathForRun = (run: Activity): Coordinate[] => {
   }
 };
 
-const colorForRun = (run: Activity): string => {
-  const dynamicRunColor = getRuntimeRunColor();
+type RGB = { r: number; g: number; b: number };
+
+const parseColor = (value: string): RGB | null => {
+  const color = value.trim().toLowerCase();
+
+  if (color.startsWith('#')) {
+    const hex = color.slice(1);
+    if (hex.length === 3) {
+      const r = parseInt(hex[0] + hex[0], 16);
+      const g = parseInt(hex[1] + hex[1], 16);
+      const b = parseInt(hex[2] + hex[2], 16);
+      return { r, g, b };
+    }
+    if (hex.length === 6) {
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+      return { r, g, b };
+    }
+    return null;
+  }
+
+  const match = color.match(
+    /rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)/
+  );
+  if (!match) return null;
+
+  return {
+    r: Math.min(255, parseInt(match[1], 10)),
+    g: Math.min(255, parseInt(match[2], 10)),
+    b: Math.min(255, parseInt(match[3], 10)),
+  };
+};
+
+const interpolateColor = (start: string, end: string, ratio: number): string => {
+  const startRgb = parseColor(start);
+  const endRgb = parseColor(end);
+  if (!startRgb || !endRgb) return start;
+
+  const t = Math.min(1, Math.max(0, ratio));
+  const r = Math.round(startRgb.r + (endRgb.r - startRgb.r) * t);
+  const g = Math.round(startRgb.g + (endRgb.g - startRgb.g) * t);
+  const b = Math.round(startRgb.b + (endRgb.b - startRgb.b) * t);
+
+  return `rgb(${r},${g},${b})`;
+};
+
+const createDistanceColorScale = (
+  runs: Activity[]
+): ((distance: number) => string) => {
+  const { start, end } = getRuntimeRunGradientColors();
+  if (runs.length === 0) {
+    return () => start;
+  }
+
+  const distances = runs.map((run) =>
+    Number.isFinite(run.distance) ? run.distance : 0
+  );
+  const minDistance = Math.min(...distances);
+  const maxDistance = Math.max(...distances);
+  const range = maxDistance - minDistance;
+
+  return (distance: number) => {
+    if (range <= 0) return start;
+    const ratio = (distance - minDistance) / range;
+    return interpolateColor(start, end, ratio);
+  };
+};
+
+const colorForRun = (
+  run: Activity,
+  distanceColor: (distance: number) => string
+): string => {
+  // Trail runs keep their distinct color
+  if (run.type === 'Run' && run.subtype === 'trail') {
+    return RUN_TRAIL_COLOR;
+  }
+
+  // Apply gradient coloring based on distance for Run activities only
+  if (run.type === 'Run' && Number.isFinite(run.distance)) {
+    return distanceColor(run.distance);
+  }
 
   switch (run.type) {
-    case 'Run': {
-      if (run.subtype === 'trail') {
-        return RUN_TRAIL_COLOR;
-      } else if (run.subtype === 'generic') {
-        return dynamicRunColor;
-      }
-      return dynamicRunColor;
-    }
+    case 'Run':
+      return MAIN_COLOR;
     case 'cycling':
     case 'Ride': // For Strava
       return CYCLING_COLOR;
@@ -267,23 +341,26 @@ const colorForRun = (run: Activity): string => {
   }
 };
 
-const geoJsonForRuns = (runs: Activity[]): FeatureCollection<LineString> => ({
-  type: 'FeatureCollection',
-  features: runs.map((run) => {
-    const points = pathForRun(run);
-    const color = colorForRun(run);
-    return {
-      type: 'Feature',
-      properties: {
-        color: color,
-      },
-      geometry: {
-        type: 'LineString',
-        coordinates: points,
-      },
-    };
-  }),
-});
+const geoJsonForRuns = (runs: Activity[]): FeatureCollection<LineString> => {
+  const distanceColor = createDistanceColorScale(runs);
+  return {
+    type: 'FeatureCollection',
+    features: runs.map((run) => {
+      const points = pathForRun(run);
+      const color = colorForRun(run, distanceColor);
+      return {
+        type: 'Feature',
+        properties: {
+          color: color,
+        },
+        geometry: {
+          type: 'LineString',
+          coordinates: points,
+        },
+      };
+    }),
+  };
+};
 
 const geoJsonForMap = async (): Promise<FeatureCollection<RPGeometry>> => {
   const [{ chinaGeojson }, worldGeoJson] = await Promise.all([

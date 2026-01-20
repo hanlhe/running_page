@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { MAP_TILE_STYLE_LIGHT, MAP_TILE_STYLE_DARK } from '@/utils/const';
 
-export type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'synthwave';
 
 // Custom event name for theme changes
 export const THEME_CHANGE_EVENT = 'theme-change';
@@ -12,7 +12,7 @@ export const THEME_CHANGE_EVENT = 'theme-change';
  * @returns The appropriate map style for the theme
  */
 export const getMapThemeFromCurrentTheme = (theme: Theme): string => {
-  if (theme === 'dark') return MAP_TILE_STYLE_DARK;
+  if (theme === 'dark' || theme === 'synthwave') return MAP_TILE_STYLE_DARK;
   return MAP_TILE_STYLE_LIGHT;
 };
 
@@ -27,12 +27,14 @@ export const useMapTheme = () => {
 
     // Check for explicit theme in DOM
     const dataTheme = document.documentElement.getAttribute('data-theme');
-    if (dataTheme === 'dark') return MAP_TILE_STYLE_DARK;
+    if (dataTheme === 'dark' || dataTheme === 'synthwave')
+      return MAP_TILE_STYLE_DARK;
     if (dataTheme === 'light') return MAP_TILE_STYLE_LIGHT;
 
     // Check for saved theme in localStorage
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') return MAP_TILE_STYLE_DARK;
+    if (savedTheme === 'dark' || savedTheme === 'synthwave')
+      return MAP_TILE_STYLE_DARK;
     if (savedTheme === 'light') return MAP_TILE_STYLE_LIGHT;
 
     // Default to dark theme
@@ -54,11 +56,14 @@ export const useMapTheme = () => {
     // 1. Explicit DOM attribute
     // 2. localStorage setting
     // 3. Default to dark theme
-    if (dataTheme === 'dark') {
+    if (dataTheme === 'dark' || dataTheme === 'synthwave') {
       newTheme = MAP_TILE_STYLE_DARK;
     } else if (dataTheme === 'light') {
       newTheme = MAP_TILE_STYLE_LIGHT;
-    } else if (!dataTheme && savedTheme === 'dark') {
+    } else if (
+      !dataTheme &&
+      (savedTheme === 'dark' || savedTheme === 'synthwave')
+    ) {
       newTheme = MAP_TILE_STYLE_DARK;
     } else if (!dataTheme && savedTheme === 'light') {
       newTheme = MAP_TILE_STYLE_LIGHT;
@@ -122,10 +127,14 @@ export const useMapTheme = () => {
  * @returns Object with current theme and function to change theme
  */
 export const useTheme = () => {
-  // Initialize theme from localStorage or default to dark
+  // Initialize theme from localStorage or default to synthwave
   const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    return (localStorage.getItem('theme') as Theme) || 'dark';
+    if (typeof window === 'undefined') return 'synthwave';
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme === 'light' || storedTheme === 'dark' || storedTheme === 'synthwave') {
+      return storedTheme;
+    }
+    return 'synthwave';
   });
 
   /**

@@ -213,12 +213,26 @@ const RunMap = ({
    */
   function switchLayerVisibility(map: MapInstance, lights: boolean) {
     const styleJson = map.getStyle();
-    styleJson.layers.forEach((it: { id: string }) => {
+    styleJson.layers.forEach((it: { id: string; type?: string }) => {
       if (!keepWhenLightsOff.includes(it.id)) {
-        if (lights) map.setLayoutProperty(it.id, 'visibility', 'visible');
-        else map.setLayoutProperty(it.id, 'visibility', 'none');
+        if (lights) {
+          map.setLayoutProperty(it.id, 'visibility', 'visible');
+        } else {
+          map.setLayoutProperty(it.id, 'visibility', 'none');
+        }
       }
     });
+    // Set background layer to transparent when lights are off
+    // This allows the page background to show through
+    try {
+      if (lights) {
+        map.setPaintProperty('background', 'background-color', '#111111');
+      } else {
+        map.setPaintProperty('background', 'background-color', 'rgba(0,0,0,0)');
+      }
+    } catch {
+      // Background layer might not exist in some styles
+    }
   }
 
   // Apply layer visibility when lights setting changes
